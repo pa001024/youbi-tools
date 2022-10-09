@@ -1,41 +1,69 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
 import { reactive, watch } from "vue";
-import "../assets/bg.png";
+import ClipboardJS from "clipboard";
+import { CopyDocument } from "@element-plus/icons";
+import moment from "moment";
 
 const state = reactive({
-  text: localStorage.getItem("text"),
-  history: [],
+  mode: "攻城",
+  text: "",
 });
 
 const attackInfo = reactive({
-  target: "",
+  target: "天空奥尔赛",
+  reason: "防守",
   level: 5,
-  coordinate: "",
-  time: "10月8日 22:00",
+  coordinate: "(233,233)",
+  time: moment(Math.ceil(Date.now() / (60 * 60 * 1e3)) * 60 * 60 * 1e3).format(
+    "M月D日 HH:mm"
+  ),
   info: "蓝线集结，跟指令围城。",
 });
-const levelView = computed(
-  () =>
-    ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¹⁰"][attackInfo.level]
-);
 
-const attackView = computed(() => {
-  return `#c2192FF主要目标: #W ${attackInfo.coordinate} ${levelView.value}${attackInfo.target}#r
-#c38E54D计划时间: #c9CFF2E10月8日 22:00#r#cFDFF00
-${attackInfo.info}`;
-});
+if (localStorage.getItem("mail_state")) {
+  try {
+    const saved = JSON.parse(localStorage.getItem("mail_state")!);
+    Object.assign(state, saved);
+  } finally {
+  }
+}
+if (localStorage.getItem("mail_attack_info")) {
+  try {
+    const saved = JSON.parse(localStorage.getItem("mail_attack_info")!);
+    Object.assign(attackInfo, saved);
+  } finally {
+  }
+}
 
 const onSubmit = () => {
-  state.text = attackView.value;
+  switch (state.mode) {
+    case "攻城":
+      const lv = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¹⁰"][
+        attackInfo.level
+      ];
+      state.text = `#c2192FF主要目标: #W${attackInfo.coordinate} ${lv}${attackInfo.target}#r
+#c38E54D计划时间: #c9CFF2E${attackInfo.time}#r#cFDFF00
+${attackInfo.info}`;
+      break;
+    case "集结":
+      state.text = `#c2192FF集结点: #W${attackInfo.coordinate}#r
+#c38E54D到位时间: #c9CFF2E${attackInfo.time}#r#cFDFF00
+${attackInfo.info}`;
+      break;
+  }
 };
 
 watch(
-  () => state.text,
+  () => state,
   (v) => {
-    localStorage.setItem("text", v!);
+    localStorage.setItem("mail_state", JSON.stringify(v));
   }
 );
+
+watch(attackInfo, (v) => {
+  localStorage.setItem("mail_attack_info", JSON.stringify(v));
+});
 
 const htmlView = computed(() => {
   let t = `<span>${state.text}</span>`;
@@ -64,17 +92,38 @@ const htmlView = computed(() => {
   t = t.replace(/##/g, "#");
   return t;
 });
+
+new ClipboardJS("#copy-btn");
 </script>
 
 <template>
   <el-row :gutter="20">
-    <el-col :span="12">
-      <el-form :inline="true" :model="attackInfo" class="demo-form-inline">
-        <el-form-item label="目标">
-          <el-input v-model="attackInfo.target" placeholder="杜汉" />
+    <el-col :span="12" :xs="24" class="attack-info">
+      <el-form>
+        <el-form-item label="模板">
+          <el-select v-model="state.mode" @change="onSubmit">
+            <el-option value="攻城"></el-option>
+            <el-option value="集结"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="等级">
-          <el-select v-model="attackInfo.level">
+      </el-form>
+      <el-form :inline="true" :model="attackInfo">
+        <el-form-item label="目标" v-if="state.mode === '攻城'">
+          <el-input
+            v-model="attackInfo.target"
+            placeholder="杜汉"
+            @input="onSubmit"
+          />
+        </el-form-item>
+        <el-form-item label="目的" v-if="state.mode === '集结'">
+          <el-input
+            v-model="attackInfo.reason"
+            placeholder="防守"
+            @input="onSubmit"
+          />
+        </el-form-item>
+        <el-form-item label="等级" v-if="state.mode === '攻城'">
+          <el-select v-model="attackInfo.level" @change="onSubmit">
             <el-option label="2" :value="2" />
             <el-option label="3" :value="3" />
             <el-option label="5" :value="5" />
@@ -83,28 +132,45 @@ const htmlView = computed(() => {
           </el-select>
         </el-form-item>
         <el-form-item label="坐标">
-          <el-input v-model="attackInfo.coordinate" placeholder="(0,0)" />
+          <el-input
+            v-model="attackInfo.coordinate"
+            placeholder="(0,0)"
+            @input="onSubmit"
+          />
         </el-form-item>
         <el-form-item label="时间">
-          <el-input v-model="attackInfo.time" placeholder="..." />
+          <el-input
+            v-model="attackInfo.time"
+            placeholder="..."
+            @change="onSubmit"
+          />
         </el-form-item>
         <el-form-item label="说明">
-          <el-input v-model="attackInfo.info" placeholder="..." />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">生成打城</el-button>
+          <el-input
+            v-model="attackInfo.info"
+            placeholder="..."
+            @change="onSubmit"
+          />
         </el-form-item>
       </el-form>
       <el-input
         v-model="state.text"
         autosize
-        :rows="3"
-        type="textarea"
         placeholder="请输入邮件内容"
         class="trans-input"
-      />
+        id="copy-text"
+      >
+        <template #append>
+          <el-button
+            id="copy-btn"
+            type="primary"
+            data-clipboard-target="#copy-text"
+            :icon="CopyDocument"
+          ></el-button>
+        </template>
+      </el-input>
     </el-col>
-    <el-col :span="12">
+    <el-col :span="12" :xs="24">
       <el-card class="trans-bg">
         <div id="mail-preview" v-html="htmlView"></div>
       </el-card>
@@ -113,17 +179,25 @@ const htmlView = computed(() => {
 </template>
 
 <style>
-#mail-preview {
-  background: url("/assets/bg.png");
-}
 .trans-input .el-textarea__inner {
-  background: none;
-  color: #f3f3f3;
   font-size: 14px;
 }
+@media (prefers-color-scheme: dark) {
+  .trans-input .el-textarea__inner {
+    background: none;
+    color: #f3f3f3;
+  }
+}
 .trans-bg {
+  background: url("../assets/bg.png");
   background-color: #293039;
   color: #f3f3f3;
   font-size: 14px;
+}
+.attack-info {
+  margin-bottom: 16px;
+}
+.attack-info .el-select .el-input {
+  width: 160px;
 }
 </style>

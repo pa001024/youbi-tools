@@ -8,6 +8,7 @@ const size: "" | "default" | "small" | "large" = "small";
 const routers = [
   { src: "/", title: "主页" },
   { src: "/mail", title: "邮件" },
+  { src: "/fly", title: "空降" },
 ];
 </script>
 
@@ -16,8 +17,9 @@ const routers = [
     <el-container>
       <el-header>
         <nav>
-          <RouterLink to="/">主页</RouterLink>
-          <RouterLink to="/mail">邮件</RouterLink>
+          <RouterLink v-for="route of routers" :key="route.src" :to="route.src">
+            {{ route.title }}
+          </RouterLink>
         </nav>
       </el-header>
       <el-main>
@@ -31,8 +33,7 @@ const routers = [
 
 <style scoped>
 .common-layout {
-  width: 100vw;
-  max-width: 1024px;
+  max-width: 1280px;
   min-height: 100vh;
 }
 
@@ -69,32 +70,5 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>
