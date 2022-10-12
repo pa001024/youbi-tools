@@ -47,8 +47,9 @@ const onSubmit = () => {
 ${attackInfo.info}`;
       break;
     case "集结":
-      state.text = `#c2192FF集结点: #W${attackInfo.coordinate}#r
-#c38E54D到位时间: #c9CFF2E${attackInfo.time}#r#cFDFF00
+      state.text = `#cD9F8C4集结点: #W${attackInfo.coordinate}#r
+#cF9F9C5目的: #c9CFF2E${attackInfo.reason}#r
+#cFAD9A1到位时间: #c9CFF2E${attackInfo.time}#r#cF37878
 ${attackInfo.info}`;
       break;
   }
