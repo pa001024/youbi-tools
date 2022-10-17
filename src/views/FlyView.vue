@@ -34,7 +34,7 @@ if (route.params.info) {
 
 watch([attackInfo], () => {
   router.push({
-    name: "flyWithInfo",
+    name: "fly",
     params: {
       info: btoa(JSON.stringify(attackInfo)),
     },
@@ -163,7 +163,7 @@ ev.distanceChange();
             <el-button @click="attackInfo.time += 60 * 60e3"> +1h </el-button>
           </el-button-group>
         </el-form-item>
-        <el-form-item label="基准速度" v-if="attackInfo.timeMode !== 1">
+        <el-form-item label="最慢速度" v-if="attackInfo.timeMode !== 1">
           <el-input v-model="attackInfo.baseSpeed" placeholder="1250" />
         </el-form-item>
       </el-form>
@@ -255,9 +255,17 @@ ev.distanceChange();
   </el-row>
 </template>
 
-<style>
-.fly-main .el-date-editor--time .el-input__wrapper {
-  width: 100%;
+<style lang="less">
+.fly-main {
+  .el-date-editor--time .el-input__wrapper {
+    width: 100%;
+  }
+  .el-card__body {
+    padding: 14px 8px 0 8px;
+  }
+  .el-form-item--small {
+    margin-bottom: 14px;
+  }
 }
 @media only screen and (max-width: 768px) {
   .fly-main .xs-pandding {
@@ -266,11 +274,5 @@ ev.distanceChange();
 }
 .row-block {
   width: 100%;
-}
-.fly-main .el-card__body {
-  padding: 14px 8px 0 8px;
-}
-.fly-main .el-form-item--small {
-  margin-bottom: 14px;
 }
 </style>

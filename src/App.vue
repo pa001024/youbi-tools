@@ -9,6 +9,7 @@ const routers = [
   { src: "/", title: "主页" },
   { src: "/mail", title: "邮件" },
   { src: "/fly", title: "空降" },
+  { src: "/cost", title: "造价" },
   { src: "/split", title: "分配" },
 ];
 </script>
