@@ -34,7 +34,7 @@ if (route.params.info) {
 
 watch([attackInfo], () => {
   router.push({
-    name: "fly",
+    name: "flyWithInfo",
     params: {
       info: btoa(JSON.stringify(attackInfo)),
     },

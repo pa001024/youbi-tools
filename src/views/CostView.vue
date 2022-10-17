@@ -62,7 +62,7 @@ if (route.params.info) {
 
 watch(state, () => {
   router.push({
-    name: "cost",
+    name: "costWithInfo",
     params: {
       info: state.ships.map((v) => v.ship.k + base62(v.count)).join(""),
     },
@@ -82,6 +82,7 @@ const ev = {
   },
   removeShip(index: number) {
     state.ships.splice(index, 1);
+    console.log(JSON.stringify(state.ships));
   },
 };
 

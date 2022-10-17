@@ -10,10 +10,13 @@ const router = createRouter({
   routes: [
     { path: "/", name: "home", component: HomeView },
     { path: "/mail", name: "mail", component: MailView },
-    { path: "/fly/:info", name: "fly", component: FlyView },
+    { path: "/fly", name: "fly", component: FlyView },
+    { path: "/fly/:info", name: "flyWithInfo", component: FlyView },
     { path: "/split", name: "split", component: SplitView },
-    { path: "/cost/:info", name: "cost", component: CostView },
+    { path: "/cost", name: "cost", component: CostView },
+    { path: "/cost/:info", name: "costWithInfo", component: CostView },
   ],
+  
 });
 
 export default router;
