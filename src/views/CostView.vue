@@ -49,7 +49,7 @@ if (route.params.info) {
   const p: ShipGroup[] = [];
   for (let i = 0; i < str.length; i += 3) {
     const info = str.substr(i, 3);
-    const ship = shipList.find((v) => v.k === info.substr(0, 2));
+    const ship = ShipsData.find((v) => v.k === info.substr(0, 2));
     if (ship) {
       p.push({
         ship,
@@ -102,20 +102,6 @@ const res = computed(() => {
 <template>
   <el-row :gutter="20" class="cost-main">
     <el-col :span="12" :xs="24">
-      <el-tabs v-model="page.shipType">
-        <el-tab-pane label="全部" name="全部">
-          <ShipSelect v-for="ship of shipList" :ship="ship" @add="ev.addShip" />
-        </el-tab-pane>
-        <el-tab-pane v-for="ty of types" :key="ty" :label="ty" :name="ty">
-          <ShipSelect
-            v-for="ship of shipList.filter((v) => v.type === ty)"
-            :ship="ship"
-            @add="ev.addShip"
-          />
-        </el-tab-pane>
-      </el-tabs>
-    </el-col>
-    <el-col :span="12" :xs="24">
       <el-card class="status-card">
         <el-form inline>
           <el-form-item label="金属">
@@ -156,6 +142,20 @@ const res = computed(() => {
           </el-form-item>
         </el-form>
       </el-card>
+    </el-col>
+    <el-col :span="12" :xs="24">
+      <el-tabs v-model="page.shipType">
+        <el-tab-pane label="全部" name="全部">
+          <ShipSelect v-for="ship of shipList" :ship="ship" @add="ev.addShip" />
+        </el-tab-pane>
+        <el-tab-pane v-for="ty of types" :key="ty" :label="ty" :name="ty">
+          <ShipSelect
+            v-for="ship of shipList.filter((v) => v.type === ty)"
+            :ship="ship"
+            @add="ev.addShip"
+          />
+        </el-tab-pane>
+      </el-tabs>
     </el-col>
   </el-row>
 </template>
