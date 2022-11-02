@@ -86,7 +86,7 @@ const ev = {
   distanceChange: () => {
     const s = new Coord(attackInfo.start);
     const e = new Coord(attackInfo.target);
-    const vector = e.minus(s).add(state.distance);
+    const vector = e.minus(s).add(state.distance * 10);
     state.outpost = s
       .add(vector)
       .round(10)
